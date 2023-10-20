@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const dns = require('node:dns');
+const dnsPromises = dns.promises;
 
 // Basic Configuration
 const port = process.env.PORT || 3000;
