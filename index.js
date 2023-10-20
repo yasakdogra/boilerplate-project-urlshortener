@@ -48,7 +48,7 @@ app.post('/api/shorturl', async function(req, res){
   try{
     await dnsPromises.lookup(url.host);
   } catch(err) {
-    return res.json({ error: 'dns lookup failed' })
+    return res.json({ error: 'invalid url' })
   }
 
   let existing = await URLShortener.findOne({ url: url.toString() }).exec();
