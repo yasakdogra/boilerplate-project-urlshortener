@@ -36,9 +36,31 @@ app.get('/', function(req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
 
-// Your first API endpoint
-app.get('/api/hello', function(req, res) {
-  res.json({ greeting: 'hello API' });
+app.post('/api/shorturl', async function(req, res){
+  let input = req.body.url;
+  let url;
+  try{
+    url = new URL(input);
+  } catch (err) {
+    return res.json({ error: 'invalid url' });
+  }
+
+  try{
+    await dnsPromises.lookup(url.host);
+  } catch(err) {
+    return res.json({ error: 'dns lookup failed' })
+  }
+
+  let existing = await URLShortener.findOne({ url: url.toString() }).exec();
+  if(existing)
+    return res.json({original_url : existing.url, short_url : existing.id});
+
+  let data = await URLShortener.create({ url: url.toString() });
+  if(data)
+    return res.json({original_url : data.url, short_url : data.id});
+  else
+    return res.json({ error: 'database error' });
+});
 });
 
 app.listen(port, function() {
