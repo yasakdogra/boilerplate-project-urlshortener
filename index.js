@@ -9,6 +9,24 @@ const dnsPromises = dns.promises;
 const port = process.env.PORT || 3000;
 
 let bodyParser = require('body-parser');
+
+const mongoose = require('mongoose');
+const AutoIncrement = require('mongoose-sequence-generator')(mongoose);
+
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const urlShortenerSchema = new mongoose.Schema({
+  url: {
+    type: String,
+    required: true
+  }
+});
+urlShortenerSchema.plugin(AutoIncrement, { inc_field: 'id' });
+const URLShortener = mongoose.model('URLShortener', urlShortenerSchema);
+
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }))
 
