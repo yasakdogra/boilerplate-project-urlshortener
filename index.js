@@ -61,6 +61,19 @@ app.post('/api/shorturl', async function(req, res){
   else
     return res.json({ error: 'database error' });
 });
+
+app.get('/api/shorturl/:short_url', async function(req, res) {
+  var short_url = req.params.short_url;
+  if(isNaN(short_url))
+    return res.json({ error: 'not found' });
+  
+  let id = parseInt(short_url);
+
+  let data = await URLShortener.findOne({id: id}).exec();
+  if(data)
+    return res.redirect(data.url);
+  else
+    return res.json({ error: 'not found' });
 });
 
 app.listen(port, function() {
